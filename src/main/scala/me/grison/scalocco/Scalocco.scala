@@ -40,6 +40,7 @@ package me.grison.scalocco
 import java.io._
 import io.Source
 import java.util.UUID
+import mustache._
 
 //#### Import for processing Markdown ####
 import org.markdown4j.Markdown4jProcessor

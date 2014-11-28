@@ -41,6 +41,7 @@ import java.io._
 import io.Source
 import java.util.UUID
 import mustache._
+import java.nio.file.Paths
 
 //#### Import for processing Markdown ####
 import org.markdown4j.Markdown4jProcessor
@@ -226,8 +227,13 @@ object Scalocco extends Markdown {
             "sections" -> sections.zipWithIndex.map(t =>
                 Map("index" -> t._2, "code" -> t._1.code, "doc" -> t._1.doc.markdown))
         ))
-        val outputFile = new File(source.getCanonicalPath.replace(path, destPath) + ".html")
+
+        def cleanSlash(diresque:String):String = if(diresque endsWith """/""") diresque.substring(0, diresque.size - 1) else diresque
+        def findSourcePath(srcFile:File):String = srcFile.getAbsolutePath.split("scala").apply(1) + "scala"
+
+        val outputFile = new File(cleanSlash(destPath) + "/" + findSourcePath(source) + ".html")
         println("Generating documentation: " + outputFile.getCanonicalPath)
+        outputFile.getParentFile.mkdirs()
         // output the HTML rendered with Mustache into a file named `SOURCE_FILE.scala.html`
         val p = new PrintWriter(outputFile)
         try { p.write(html) } finally { p.close() }

@@ -41,7 +41,6 @@ import java.io._
 import io.Source
 import java.util.UUID
 import mustache._
-import java.nio.file.Paths
 
 //#### Import for processing Markdown ####
 import org.markdown4j.Markdown4jProcessor
@@ -216,22 +215,28 @@ object Scalocco extends Markdown {
      * @param destPath the Path where to write the documentation file.
      */
     def documentFile(source: File, path: String, destPath: String) = {
-        val sections = parseSections(source)
+        def cleanSlash(diresque:String):String = if(diresque endsWith """/""") diresque.substring(0, diresque.size - 1) else diresque
+        def findSourcePath(srcFile:File):String = srcFile.getAbsolutePath.split("scala").apply(1) + "scala"
+        def generateDocPath(srcFile:File, docPath:String):File = new File(cleanSlash(docPath) + "/" + findSourcePath(srcFile) + ".html")
+        def prettifyName(srcFile:File):String = {
+          var nameString = srcFile.getAbsolutePath.split("scala").apply(1)
+          nameString = nameString.substring(0, nameString.size - 1) // trim trailing period
+          nameString
+        }
+      val sections = parseSections(source)
         val mustache = new Mustache(Source.fromURL(getClass.getResource("/template.html")).mkString)
         val html = mustache.render(Map(
             // This is the title of the Scala source file
             "title" -> source.getName,
             // The sources are available in the right-upper box on the generated documentation
-            "sources" -> sources,
+            "sources" -> sources.map(s => generateDocPath(s, destPath).getAbsolutePath -> prettifyName(s)),
             // keep indexes for sections
             "sections" -> sections.zipWithIndex.map(t =>
                 Map("index" -> t._2, "code" -> t._1.code, "doc" -> t._1.doc.markdown))
         ))
 
-        def cleanSlash(diresque:String):String = if(diresque endsWith """/""") diresque.substring(0, diresque.size - 1) else diresque
-        def findSourcePath(srcFile:File):String = srcFile.getAbsolutePath.split("scala").apply(1) + "scala"
 
-        val outputFile = new File(cleanSlash(destPath) + "/" + findSourcePath(source) + ".html")
+        val outputFile = generateDocPath(source, destPath)
         println("Generating documentation: " + outputFile.getCanonicalPath)
         outputFile.getParentFile.mkdirs()
         // output the HTML rendered with Mustache into a file named `SOURCE_FILE.scala.html`

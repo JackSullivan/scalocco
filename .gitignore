@@ -38,5 +38,8 @@ docs
 #  syntax: regexp
 #  ^\.pc/
 
+# Mac
+.DS_Store
+
 #SHITTY output not in target directory
 build.log

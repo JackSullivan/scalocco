@@ -211,10 +211,9 @@ object Scalocco extends Markdown {
     /**
      * Generate the HTML documentation for the given File and sections.
      * @param source the file to be documented.
-     * @param path the Path of the original file.
      * @param destPath the Path where to write the documentation file.
      */
-    def documentFile(source: File, path: String, destPath: String) = {
+    def documentFile(source: File, destPath: String) = {
         def cleanSlash(diresque:String):String = if(diresque endsWith """/""") diresque.substring(0, diresque.size - 1) else diresque
         def findSourcePath(srcFile:File):String = srcFile.getAbsolutePath.split("scala").apply(1) + "scala"
         def generateDocPath(srcFile:File, docPath:String):File = new File(cleanSlash(docPath) + "/" + findSourcePath(srcFile) + ".html")
@@ -261,7 +260,7 @@ object Scalocco extends Markdown {
         val dest = new File(destPath)
         if (!dest.exists()) dest.mkdirs()
 
-        files.foreach(documentFile(_, basePath, destPath))
+        files.foreach(documentFile(_, destPath))
     }
 
     /**

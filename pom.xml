@@ -40,6 +40,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-parser-combinators</artifactId>
+      <version>2.11.0-M4</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.commonjava.googlecode.markdown4j</groupId>
       <artifactId>markdown4j</artifactId>
       <version>2.2-cj-1.0</version>
@@ -51,11 +57,16 @@
       <version>1.2</version>
     </dependency> 
 
+    <dependency>
+      <groupId>org.scalacheck</groupId>
+      <artifactId>scalacheck_${scala.majorVersion}</artifactId>
+      <version>1.12.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
-    <testSourceDirectory>src/test/scala</testSourceDirectory>
     <plugins>
       <!-- Adds support for building Scala -->
       <plugin>
